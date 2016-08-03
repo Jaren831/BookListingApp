@@ -11,13 +11,18 @@ public class Book {
     //Author of book.
     private String mAuthor;
 
+    //Url of book on google books.
+    private String mUrl;
+
     /**
      * @param author is the author of the book.
      * @param title is the title of the book.
+     * @param url is the url of book on google books.
      */
-    public Book(String author, String title) {
+    public Book(String author, String title, String url) {
         mTitle = title;
         mAuthor = author;
+        mUrl = url;
     }
 
     /**
@@ -32,5 +37,9 @@ public class Book {
      */
     public String getAuthor() {
         return mAuthor;
+    }
+
+    public String getUrl() {
+        return mUrl;
     }
 }
