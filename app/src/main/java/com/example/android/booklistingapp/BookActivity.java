@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,8 +36,6 @@ public class BookActivity extends AppCompatActivity{
     public static final String LOG_TAG = BookActivity.class.getSimpleName();
 
     //Baseline url for google books api.
-    final static String API_KEY = "key=AIzaSyC2NqsEr1TAJ87RGYOv00QAEDYqLOOM";
-
     public static final String BOOK_JSON_URL = "https://www.googleapis.com/books/v1/volumes?q=robert";
 
     @Override
@@ -46,10 +47,10 @@ public class BookActivity extends AppCompatActivity{
         task.execute();
 
         //Create a list of books.
-        final ArrayList<Book> books = QueryBooks.extractBooks();
+        final ArrayList<Book> books = new ArrayList<Book>();
 
         //Create adapter for each book in list. Create list items for each book in list.
-        final BookAdapter adapter = new BookAdapter(this, books);
+        BookAdapter adapter = new BookAdapter(this, books);
 
         //Find the ListView in the view hierarchy.
         ListView listView = (ListView) findViewById(R.id.book_list);
@@ -61,10 +62,10 @@ public class BookActivity extends AppCompatActivity{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Find the current book that was clicked on
-                Book currentBook = adapter.getItem(position);
+                Book book = books.get(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri bookUri = Uri.parse(currentBook.getUrl());
+                Uri bookUri = Uri.parse(book.getUrl());
 
                 // Create a new intent to view the book URI
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, bookUri);
@@ -74,11 +75,24 @@ public class BookActivity extends AppCompatActivity{
             }
         });
     }
+    /**
+     * Update the screen to display information from the given {@link Book}.
+     */
+    private void updateUi(Book book) {
+        // Display the book title in the UI
+        TextView titleTextView = (TextView) findViewById(R.id.title);
+        titleTextView.setText(book.getTitle());
+
+        // Display the book author in the UI
+        TextView authorTextView = (TextView) findViewById(R.id.author);
+        authorTextView.setText(book.getAuthor());
+    }
     private class BookAsyncTask extends AsyncTask<URL, Void, Book> {
         @Override
         protected Book doInBackground(URL... urls) {
             //Create url object
-            URL url = createURL(BOOK_JSON_URL + "robert");
+            URL url = createURL(BOOK_JSON_URL + getIntent().getStringExtra("search"));
+            System.out.print(url);
 
             //Perform HTTP request to the URL and receive a JSON response back
             String jsonResponse = "";
@@ -88,7 +102,8 @@ public class BookActivity extends AppCompatActivity{
                 Log.e(LOG_TAG, "Problem receiving the book JSON result.", e);
             }
 
-            //Extract relevant fields from the JSON response
+            //Extract relevant fields from the JSON response is a string from readfromstream
+            // --> extractfromjson
             Book book = extractItemFromJson(jsonResponse);
 
             //Return the object
@@ -99,6 +114,8 @@ public class BookActivity extends AppCompatActivity{
             if (book == null) {
                 return;
             }
+
+            updateUi(book);
         }
 
         /**
@@ -155,6 +172,7 @@ public class BookActivity extends AppCompatActivity{
          * Convert the InputStream into a string which contains the whole JSON response from the
          * server
          */
+        @NonNull
         private String readFromStream(InputStream inputStream) throws IOException {
             StringBuilder output = new StringBuilder();
             if (inputStream != null) {
@@ -172,32 +190,51 @@ public class BookActivity extends AppCompatActivity{
 
         /**
          * Return a Book object by parsing out information about the
-         * first book from teh input bookJSON string
+         * first book from the input bookJSON string
          */
-        private Book extractItemFromJson(String bookJSON) {
+        @Nullable
+        private Book extractItemFromJson(String inputStream) {
             try {
-                JSONObject baseJsonResponse = new JSONObject(bookJSON);
-                JSONArray itemArray = baseJsonResponse.getJSONArray("items");
+                JSONObject baseJsonResponse = new JSONObject(inputStream);
+                JSONArray items = baseJsonResponse.getJSONArray("items");
 
                 // If there are results in the items array
-                if (itemArray.length() > 0) {
-                    //Extract out the first item
-                    JSONObject firstItem = itemArray.getJSONObject(0);
-                    JSONObject volumeInfo = firstItem.getJSONObject("volumeInfo");
-
-                    return firstItem;
-//                    //Extract out the author, title, and url
-//                    String title = volumeInfo.getString("title");
-//                    String author = volumeInfo.getString("authors");
-//                    String url = volumeInfo.getString("canonicalVolumeLink");
-//
-//                    //Create a new book object
-//                    return new Book(author, title, url);
+                if (items.length() > 0) {
+                    extractBooks(items);
                 }
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Problem parsing the book JSON result", e);
             }
             return null;
+        }
+        public ArrayList<Book> extractBooks(JSONArray item) {
+
+            // Create an empty ArrayList that we can start adding books to
+            ArrayList<Book> books = new ArrayList<>();
+
+            // Try to parse the SAMPLE_JSON_RESPONSE. If there's a problem with the way the JSON
+            // is formatted, a JSONException exception object will be thrown.
+            // Catch the exception so the app doesn't crash, and print the error message to the logs
+
+            try {
+                for (int i = 0; i < item.length(); i++) {
+                    JSONObject currentBook = item.getJSONObject(i);
+                    JSONObject volumeInfo = currentBook.getJSONObject("volumeInfo");
+
+                    String author = volumeInfo.getString("authors");
+                    String title = volumeInfo.getString("title");
+                    String url = volumeInfo.getString("canonicalVolumeLink");
+                    books.add(new Book(author, title, url));
+                }
+            } catch (JSONException e) {
+                //If an e error is thrown, catch exception so app doesn't crash. Print log message
+                //with the message from the exception.
+                Log.e("extractBooks", "Problem parsing the book JSON results", e);
+            }
+
+            //Return list of books.
+            return books;
+
         }
     }
 }

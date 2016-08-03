@@ -35,7 +35,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
         //Find the TextView with id title
         TextView titleTextView = (TextView) listItemView.findViewById(R.id.title);
         //Display the title of the current book
-        authorTextView.setText(currentBook.getTitle());
+        titleTextView.setText(currentBook.getTitle());
         return listItemView;
     }
 }
