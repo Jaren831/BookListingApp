@@ -36,7 +36,7 @@ public class BookActivity extends AppCompatActivity{
     public static final String LOG_TAG = BookActivity.class.getSimpleName();
 
     //Baseline url for google books api.
-    public static final String BOOK_JSON_URL = "https://www.googleapis.com/books/v1/volumes?q=robert";
+    public static final String BOOK_JSON_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
