@@ -39,6 +39,9 @@ public class Book {
         return mAuthor;
     }
 
+    /**
+     * @return the url of the book.
+     */
     public String getUrl() {
         return mUrl;
     }

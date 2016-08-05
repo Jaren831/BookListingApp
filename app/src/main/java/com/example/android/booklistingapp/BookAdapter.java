@@ -26,7 +26,6 @@ public class BookAdapter extends ArrayAdapter<Book> {
         }
         Book currentBook = getItem(position);
 
-
         //Find the TextView with id author
         TextView authorTextView = (TextView) listItemView.findViewById(R.id.author);
         //Display author of the current book
