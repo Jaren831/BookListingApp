@@ -174,21 +174,19 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 JSONObject baseJsonObject = new JSONObject(bookJSON);
-                JSONArray itemJsonArray = baseJsonObject.optJSONArray("items");
+                JSONArray itemJsonArray = baseJsonObject.getJSONArray("items");
+                if (itemJsonArray.length() > 0) {
+                    for (int i = 0; i < itemJsonArray.length(); i++) {
+                        JSONObject arrayJsonObject = itemJsonArray.getJSONObject(i);
+                        JSONObject volumeInfoJsonObject = arrayJsonObject.getJSONObject("volumeInfo");
 
-                for (int i = 0; i < itemJsonArray.length(); i++) {
-                    JSONObject arrayJsonObject = itemJsonArray.optJSONObject(i);
-                    JSONObject volumeInfoJsonObject = arrayJsonObject.optJSONObject("volumeInfo");
-
-                    // Extract out the title, author, and url values
-                    String title = volumeInfoJsonObject.optString("title");
-                    String authors = "";
-                    String url = volumeInfoJsonObject.optString("canonicalVolumeLink");
-                    JSONArray authorsJsonArray = volumeInfoJsonObject.optJSONArray("authors");
-                    for (int j = 0; j < authorsJsonArray.length(); j++) {
-                        authors += authorsJsonArray.optString(j) + " ";
+                        // Extract out the title, author, and url values
+                        String title = volumeInfoJsonObject.getString("title");
+                        String authors = volumeInfoJsonObject.getString("authors");
+                        String url = volumeInfoJsonObject.getString("canonicalVolumeLink");
+                        books.add(new Book(authors, title, url));
                     }
-                    books.add(new Book(authors, title, url));
+                    System.out.print(books);
                 }
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Problem parsing the book JSON results", e);
