@@ -7,14 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 /**
  * Created by Jaren Lynch on 8/2/2016.
  */
 public class BookAdapter extends ArrayAdapter<Book> {
-    public BookAdapter(Context context, ArrayList<Book> books) {
-        super(context, 0, books);
+    public BookAdapter(Context context) {
+        super(context, 0);
     }
 
     @Override

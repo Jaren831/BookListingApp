@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.book_list);
         searchText = (EditText) findViewById(R.id.searchText);
         searchButton = (Button) findViewById(R.id.searchButton);
-        adapter = new BookAdapter(this, books);
+        adapter = new BookAdapter(this);
+        listView.setAdapter(adapter);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,24 +61,22 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Update the screen to display information from the given {@link Book}.
      */
-    private void updateUi(Book book) {
-        // Display the book author in the UI
-        TextView authorTextView = (TextView) findViewById(R.id.author);
-        authorTextView.setText(book.getAuthor());
-
-        // Display the book title in the UI
-        TextView titleTextView = (TextView) findViewById(R.id.title);
-        titleTextView.setText(book.getTitle());
+    private void updateUi(List<Book> bookList) {
+        adapter.clear();
+        adapter.addAll(bookList);
+        adapter.notifyDataSetChanged();
     }
 
-    private class BookAsyncTask extends AsyncTask<URL, Void, Book> {
+    private class BookAsyncTask extends AsyncTask<URL, Void, List<Book>> {
 
         /** Tag for the log messages */
 
+        String query = searchText.getText().toString();
+
         @Override
-        protected Book doInBackground(URL... urls) {
+        protected List<Book> doInBackground(URL... urls) {
             // Create URL object
-            URL url = createURL(BOOK_REQUEST_URL + searchText);
+            URL url = createURL(BOOK_REQUEST_URL + query);
 
             // Perform HTTP request to the URL and receive a JSON response back
             String jsonResponse = "";
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
          * {@link BookAsyncTask}).
          */
         @Override
-        protected void onPostExecute(Book book) {
+        protected void onPostExecute(List<Book> book) {
             if (book == null) {
                 return;
             }
@@ -170,29 +169,38 @@ public class MainActivity extends AppCompatActivity {
             }
             return output.toString();
         }
-        private Book extractBookFromJSON(String bookJSON) {
+        private List<Book> extractBookFromJSON(String bookJSON) {
+
+            List<Book> bookResult = new ArrayList<>();
 
             try {
                 JSONObject baseJsonObject = new JSONObject(bookJSON);
                 JSONArray itemJsonArray = baseJsonObject.getJSONArray("items");
-                if (itemJsonArray.length() > 0) {
-                    for (int i = 0; i < itemJsonArray.length(); i++) {
-                        JSONObject arrayJsonObject = itemJsonArray.getJSONObject(i);
-                        JSONObject volumeInfoJsonObject = arrayJsonObject.getJSONObject("volumeInfo");
 
-                        // Extract out the title, author, and url values
-                        String title = volumeInfoJsonObject.getString("title");
-                        String authors = volumeInfoJsonObject.getString("authors");
-                        String url = volumeInfoJsonObject.getString("canonicalVolumeLink");
-                        books.add(new Book(authors, title, url));
+                for (int i = 0; i < itemJsonArray.length(); i++) {
+                    JSONObject arrayJsonObject = itemJsonArray.getJSONObject(i);
+                    JSONObject volumeInfoJsonObject = arrayJsonObject.getJSONObject("volumeInfo");
+
+                    // Extract out the title, author, and url values
+                    String title = volumeInfoJsonObject.optString("title");
+                    String authors = "";
+                    String url = volumeInfoJsonObject.optString("canonicalVolumeLink");
+
+                    if (volumeInfoJsonObject.has("authors")) {
+
+                        JSONArray authorsJsonArray = volumeInfoJsonObject.getJSONArray("authors");
+                        for (int j = 0; j < authorsJsonArray.length(); j++) {
+                            authors += authorsJsonArray.optString(j) + " ";
+                        }
+
                     }
-                    System.out.print(books);
+                    bookResult.add(new Book(authors, title, url));
                 }
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Problem parsing the book JSON results", e);
             }
 
-            return null;
+            return bookResult;
         }
     }
 }
