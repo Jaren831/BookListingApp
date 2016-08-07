@@ -28,14 +28,14 @@ public class BookAsyncTask extends AsyncTask<URL, Void, List<Book>> {
     private String mUrl;
 
     public BookAsyncTask(String url, AsyncResponse asyncResponse) {
-        mUrl = ;
+        mUrl = url;
         delegate = asyncResponse;
     }
 
     @Override
     protected List<Book> doInBackground(URL... urls) {
         // Create URL object
-        URL url = createURL(BOOK_REQUEST_URL + mUrl);
+        URL url = createURL(mUrl);
 
         // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = "";
@@ -48,15 +48,6 @@ public class BookAsyncTask extends AsyncTask<URL, Void, List<Book>> {
 
         BookQuery query = new BookQuery(jsonResponse);
         return query.extractBookFromJSON(jsonResponse);
-    }
-
-    /**
-     * Update the screen to display information from the given {@link Book}.
-     */
-    private void updateUi(List<Book> bookList) {
-        adapter.clear();
-        adapter.addAll(bookList);
-        adapter.notifyDataSetChanged();
     }
 
     /**

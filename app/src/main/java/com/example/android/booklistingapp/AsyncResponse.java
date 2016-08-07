@@ -5,5 +5,5 @@ import java.util.ArrayList;
 
 public interface AsyncResponse {
 
-    void processFinish(ArrayList<Book> arrayList);
+    void processFinish(ArrayList<Book> list);
 }
