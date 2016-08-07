@@ -1,9 +1,9 @@
 package com.example.android.booklistingapp;
 
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface AsyncResponse {
 
-    void processFinish(ArrayList<Book> list);
+    void processFinish(List<Book> bookList);
 }

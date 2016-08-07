@@ -19,9 +19,6 @@ import java.util.List;
  */
 public class BookAsyncTask extends AsyncTask<URL, Void, List<Book>> {
 
-    /** Tag for the log messages */
-    private static final String BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
-
     public final String LOG_TAG = MainActivity.class.getSimpleName();
     private ListView mListView;
     public AsyncResponse delegate = null;
@@ -59,6 +56,7 @@ public class BookAsyncTask extends AsyncTask<URL, Void, List<Book>> {
         if (book == null) {
             return;
         }
+        delegate.processFinish(book);
 
     }
 

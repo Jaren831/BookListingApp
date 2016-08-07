@@ -4,12 +4,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class BookActivity extends AppCompatActivity {
 
     ListView listView;
-    ArrayList<Book> books;
     BookAdapter adapter;
 
     @Override
@@ -17,21 +16,18 @@ public class BookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.book_list);
 
-        getIntent().getSerializableExtra("search");
-
         listView = (ListView) findViewById(R.id.book_list);
         adapter = new BookAdapter(this);
         listView.setAdapter(adapter);
-        books = new ArrayList<Book>();
 
 
         String url = generateUrl();
         BookAsyncTask task = new BookAsyncTask(url, new AsyncResponse() {
             @Override
-            public void processFinish(ArrayList<Book> list) {
-                books.clear();
-                books = list;
-                listView.setAdapter(adapter);
+            public void processFinish(List<Book> bookList) {
+                adapter.clear();
+                adapter.addAll(bookList);
+                adapter.notifyDataSetChanged();
             }
         });
         task.execute();
