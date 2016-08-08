@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">BookListingApp</string>
+
+    <!-- Text for empty search message -->
+    <string name="empty">Type in some keywords to find a desired book!</string>
+
+    <!-- Text for search button -->
+    <string name="searchButton">Search</string>
+
+    <!-- Text for search hint -->
+    <string name="searchText">Search for…</string>
 </resources>

@@ -27,9 +27,16 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent bookIntent = new Intent(MainActivity.this, BookActivity.class);
-                bookIntent.putExtra("search", searchText.getText().toString());
-                startActivity(bookIntent);
+                if (searchText.getText().toString().equals("")) {
+                    Intent emptyIntent = new Intent(MainActivity.this, EmptyActivity.class);
+                    startActivity((emptyIntent));
+
+                } else {
+                    Intent bookIntent = new Intent(MainActivity.this, BookActivity.class);
+                    bookIntent.putExtra("search", searchText.getText().toString());
+                    startActivity(bookIntent);
+                }
+
             }
         });
     }

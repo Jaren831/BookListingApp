@@ -2,7 +2,6 @@ package com.example.android.booklistingapp;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ListView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.util.List;
 public class BookAsyncTask extends AsyncTask<URL, Void, List<Book>> {
 
     public final String LOG_TAG = MainActivity.class.getSimpleName();
-    private ListView mListView;
     public AsyncResponse delegate = null;
     private String mUrl;
 
