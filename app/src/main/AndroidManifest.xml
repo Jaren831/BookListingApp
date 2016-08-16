@@ -3,6 +3,7 @@
     package="com.example.android.booklistingapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -31,13 +32,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:parentActivityName=".MainActivity"
-            android:name=".EmptyActivity">
+            android:name=".EmptyActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+            <intent-filter>
+                <action android:name="com.example.android.booklistingapp.EmptyActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".NoConnectionActivity"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"/>
             <intent-filter>
-                <action android:name="com.example.android.booklistingapp.EmptyActivity"/>
+                <action android:name="com.example.android.booklistingapp.NoConnectionAcitivty" />
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
 

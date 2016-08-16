@@ -1,11 +1,20 @@
 <resources>
     <string name="app_name">BookListingApp</string>
 
+    <!-- Text for failed search message -->
+    <string name="empty">No information available!</string>
+
     <!-- Text for empty search message -->
-    <string name="empty">Type in some keywords to find a desired book!</string>
+    <string name="blank">Please input keywords to search!</string>
+
+    <!-- Text for no connection message -->
+    <string name="no_connection">Check your internet connection!</string>
 
     <!-- Text for search button -->
     <string name="searchButton">Search</string>
+
+    <!-- Text for refresh button -->
+    <string name="refreshButton">Refresh</string>
 
     <!-- Text for search hint -->
     <string name="searchText">Search for…</string>

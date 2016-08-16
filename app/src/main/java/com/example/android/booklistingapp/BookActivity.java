@@ -1,7 +1,10 @@
 package com.example.android.booklistingapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +32,7 @@ public class BookActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.book_list);
         adapter = new BookAdapter(this);
         listView.setAdapter(adapter);
+        listView.setEmptyView(findViewById(R.id.empty));
 
         String url = generateUrl();
         BookAsyncTask task = new BookAsyncTask(url, new AsyncResponse() {
@@ -39,7 +43,18 @@ public class BookActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
-        task.execute();
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+            task.execute();
+        } else {
+            Intent noConnectionIntent = new Intent(BookActivity.this, NoConnectionActivity.class);
+            startActivity((noConnectionIntent));
+        }
 
         /**
          * Goes to book url on click.
