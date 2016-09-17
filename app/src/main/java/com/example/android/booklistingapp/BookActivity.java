@@ -1,6 +1,5 @@
 package com.example.android.booklistingapp;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -11,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -22,7 +22,7 @@ public class BookActivity extends AppCompatActivity {
     BookAdapter adapter;
 
     //For accompanying thumbnail. Have not figured out how to implement.
-    ProgressDialog mProgressDialog;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,13 @@ public class BookActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.book_list);
         adapter = new BookAdapter(this);
         listView.setAdapter(adapter);
-        listView.setEmptyView(findViewById(R.id.empty));
+
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        while (listView == null) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
 
         String url = generateUrl();
         BookAsyncTask task = new BookAsyncTask(url, new AsyncResponse() {
@@ -41,6 +47,11 @@ public class BookActivity extends AppCompatActivity {
                 adapter.clear();
                 adapter.addAll(bookList);
                 adapter.notifyDataSetChanged();
+                mProgressBar.setVisibility(View.GONE);
+                if(bookList.isEmpty()) {
+                    findViewById(R.id.empty).setVisibility(View.VISIBLE);
+
+                }
             }
         });
         ConnectivityManager cm =

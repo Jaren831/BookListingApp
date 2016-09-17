@@ -16,5 +16,11 @@
         android:textSize="20sp"
         android:layout_gravity="center"
         android:textAppearance="?android:textAppearanceMedium"
+        android:visibility="gone"
         android:text="@string/empty" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"/>
 </FrameLayout>
