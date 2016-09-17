@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -33,6 +34,12 @@ public class BookAdapter extends ArrayAdapter<Book> {
         TextView titleTextView = (TextView) listItemView.findViewById(R.id.title);
         //Display the title of the current book
         titleTextView.setText(currentBook.getTitle());
+
+        TextView snippetTextView = (TextView) listItemView.findViewById(R.id.snippet);
+        snippetTextView.setText(currentBook.getSnippet());
+
+        ImageView thumbnailView = (ImageView) listItemView.findViewById(R.id.thumbnail);
+        thumbnailView.setImageBitmap(currentBook.getThumbnail());
 
         return listItemView;
     }

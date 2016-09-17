@@ -1,5 +1,7 @@
 package com.example.android.booklistingapp;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Jaren Lynch on 7/4/2016.
  */
@@ -15,7 +17,9 @@ public class Book {
     private String mUrl;
 
     //Thumbnail of book on google books.
-    private String mThumbnail;
+    private Bitmap mThumbnail;
+
+    private String mSnippet;
 
     /**
      * @param author is the author of the book.
@@ -23,11 +27,12 @@ public class Book {
      * @param url is the url of book on google bo
      * @param thumbnail is the url of the picture of the book on google books. oks.
      */
-    public Book(String author, String title, String url, String thumbnail) {
+    public Book(String author, String title, String url, Bitmap thumbnail, String snippet) {
         mTitle = title;
         mAuthor = author;
         mUrl = url;
         mThumbnail = thumbnail;
+        mSnippet = snippet;
     }
 
     /**
@@ -54,7 +59,11 @@ public class Book {
     /**
      * @return the thumbnail of the book.
     */
-    public String getThumbnail() {
+    public Bitmap getThumbnail() {
         return mThumbnail;
+    }
+
+    public String getSnippet() {
+        return mSnippet;
     }
 }
